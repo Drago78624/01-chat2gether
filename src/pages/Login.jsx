@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   FormControl,
   FormErrorMessage,
   Heading,
@@ -9,7 +10,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import utilConfig from "../util-config";
 import { GrLogin } from "react-icons/gr";
 import { FaGooglePlusG } from "react-icons/fa";
@@ -26,6 +27,7 @@ const cookies = new Cookies()
 const Login = () => {
   const [wrongPass, setWrongPass] = useState(false);
   const [userNotFound, setUserNotFound] = useState(false);
+
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Please enter your email"),
     password: yup.string().min(8).required(),
@@ -42,7 +44,9 @@ const Login = () => {
 
   const onLogin = async (data) => {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const result = await signInWithEmailAndPassword(auth, data.email, data.password);
+      cookies.set("auth-token", result.user.refreshToken);
+      navigate("/createroom");
     } catch (err) {
       const errorCode = err.code;
       if (errorCode === "auth/wrong-password") {
@@ -81,7 +85,7 @@ const Login = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Box shadow="2xl" padding={10} minWidth="350px">
+      <Box shadow="2xl" padding={8} minW={{ base: "350px", sm: "400px" }}>
         <Heading textAlign="center" mb={10}>
           Login
         </Heading>
@@ -91,6 +95,7 @@ const Login = () => {
               <Input
                 variant="flushed"
                 placeholder="Email Address"
+                type="email"
                 {...register("email")}
               />
               <FormErrorMessage>
@@ -102,6 +107,7 @@ const Login = () => {
               <Input
                 variant="flushed"
                 placeholder="Password"
+                type="password"
                 {...register("password")}
               />
               <FormErrorMessage>
@@ -112,14 +118,15 @@ const Login = () => {
             </FormControl>
             <Box width="full">
               <Button
-                mb={5}
                 type="submit"
                 colorScheme={utilConfig.colorScheme}
                 width="full"
+                onClick={onLogin}
               >
                 <Text mr={2}>Login</Text>
                 <GrLogin fontSize={18} />
               </Button>
+              <Divider my={5} />
               <Button onClick={onLogInWithGoogle} mb={5} width="full" colorScheme="red">
                 <FaGooglePlusG fontSize={24} />{" "}
                 <Text ml={2}>Login with Google</Text>

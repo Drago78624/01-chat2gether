@@ -1,6 +1,14 @@
-import { Box, Button, Container, Flex, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  HStack,
+  Heading,
+} from "@chakra-ui/react";
 import React from "react";
 import Logout from "./Logout";
+import ToggleDarkModeBtn from "./ToggleDarkModeBtn";
 
 const Navbar = () => {
   return (
@@ -8,7 +16,10 @@ const Navbar = () => {
       <Container maxW="992px">
         <Flex justifyContent="space-between">
           <Heading>Chat2gether</Heading>
-          <Logout />
+          <HStack>
+            <ToggleDarkModeBtn />
+            <Logout />
+          </HStack>
         </Flex>
       </Container>
     </Box>

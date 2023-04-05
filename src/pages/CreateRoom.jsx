@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Navbar from "../components/Navbar";
 import { Box, Button, Flex, Heading, Input, VStack } from "@chakra-ui/react";
+import utilConfig from "../util-config";
 
 const cookies = new Cookies();
 
@@ -38,7 +39,7 @@ const CreateRoom = () => {
           <form onSubmit={createRoom}>
             <VStack spacing={4}>
               <Input ref={inputRef} placeholder="Room Name" />
-              <Button type="submit" width="full" onClick={createRoom}>
+              <Button type="submit" colorScheme={utilConfig.colorScheme} width="full" onClick={createRoom}>
                 Create or Enter
               </Button>
             </VStack>

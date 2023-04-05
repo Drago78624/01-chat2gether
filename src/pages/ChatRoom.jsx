@@ -1,5 +1,5 @@
 import { Box, Button, Container, Flex, HStack, Heading, Input, VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Navbar from "../components/Navbar";
@@ -14,6 +14,8 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase-config";
 import Message from "../components/Message";
+import authContext from "../auth-context";
+import AlertBox from "../components/AlertBox";
 
 const cookies = new Cookies();
 
@@ -24,9 +26,12 @@ const ChatRoom = () => {
   const { room } = useParams();
   const [messages, setMessages] = useState([]);
 
+  const authCtx = useContext(authContext)
+
   useEffect(() => {
     if (!cookies.get("auth-token")) {
       navigate("/");
+      return
     }
   }, []);
 
@@ -36,7 +41,7 @@ const ChatRoom = () => {
       await addDoc(messagesCollectionRef, {
         message_text: newMsg,
         createdAt: serverTimestamp(),
-        user: auth.currentUser.displayName,
+        user: auth.currentUser.displayName || authCtx.userName,
         room: room,
       });
       setNewMsg("");
@@ -89,6 +94,7 @@ const ChatRoom = () => {
               </Button>
             </HStack>
           </form>
+          <AlertBox status="info" text />
         </Container>
       </Flex>
     </>
