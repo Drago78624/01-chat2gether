@@ -1,17 +1,17 @@
 import { Alert, AlertIcon } from "@chakra-ui/react";
 import React from "react";
 
-const AlertBox = (props) => {
+const AlertBox = ({config}) => {
   return (
     <Alert
       position="fixed"
       width={500}
       bottom={20}
-      status={props.status}
+      status={config.status}
       variant="solid"
     >
       <AlertIcon />
-      Data uploaded to the server. Fire on!
+      {config.text}
     </Alert>
   );
 };

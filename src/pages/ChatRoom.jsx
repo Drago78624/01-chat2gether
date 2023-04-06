@@ -1,4 +1,14 @@
-import { Box, Button, Container, Flex, HStack, Heading, Input, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  HStack,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -16,6 +26,11 @@ import { auth, db } from "../firebase-config";
 import Message from "../components/Message";
 import authContext from "../auth-context";
 import AlertBox from "../components/AlertBox";
+import { BiArrowBack } from "react-icons/bi";
+import { Link as RouterLink } from "react-router-dom";
+import utilConfig from "../util-config";
+import { AiOutlineSend } from "react-icons/ai";
+import ScrollingBox from "../components/ScrollingBox";
 
 const cookies = new Cookies();
 
@@ -26,12 +41,12 @@ const ChatRoom = () => {
   const { room } = useParams();
   const [messages, setMessages] = useState([]);
 
-  const authCtx = useContext(authContext)
+  const authCtx = useContext(authContext);
 
   useEffect(() => {
     if (!cookies.get("auth-token")) {
       navigate("/");
-      return
+      return;
     }
   }, []);
 
@@ -55,7 +70,6 @@ const ChatRoom = () => {
       orderBy("createdAt")
     );
     const unsubscribe = onSnapshot(queryMsg, (snapshot) => {
-      console.log("new msg");
       let msgs = [];
       snapshot.forEach((doc) => {
         msgs.push({ ...doc.data(), id: doc.id });
@@ -68,33 +82,47 @@ const ChatRoom = () => {
   return (
     <>
       <Navbar />
-      <Flex minHeight="90vh" justifyContent="center" alignItems="center">
-        <Container>
-          <Heading size="lg" mb={10} textAlign="center">
-            Room : {room}
-          </Heading>
-          <Box overflowY="scroll" maxH="400px">
-          <VStack py={5} align="left">
-            {messages.map((message) => {
-              return (
-                <Message key={message.id} user={message.user} message={message.message_text} />
-              );
-            })}
-          </VStack>
+      <Container maxW="992px" paddingTop={10}>
+        <Button as={RouterLink} to="/createroom">
+          <BiArrowBack />
+          <Text ml="2">Back</Text>
+        </Button>
+      </Container>
+      <Heading size="lg" my={10} textAlign="center">
+        Room :{" "}
+        <Text color={utilConfig.colorScheme} display="inline">
+          {room}
+        </Text>
+      </Heading>
+      <Flex minHeight="70vh" justifyContent="center" alignItems="center">
+        <Container maxW="992px" padding={5} shadow="2xl">
+          <ScrollingBox>
+            <VStack py={5} align="left">
+              {messages.map((message) => {
+                return (
+                  <Message
+                    key={message.id}
+                    user={message.user}
+                    message={message.message_text}
+                  />
+                );
+              })}
+            </VStack>
+          </ScrollingBox>
+          <Box mt={5}>
+            <form onSubmit={sendMsg}>
+              <HStack>
+                <Input
+                  value={newMsg}
+                  onChange={(e) => setNewMsg(e.target.value)}
+                  placeholder="Type a message..."
+                />
+                <Button type="submit" colorScheme={utilConfig.colorScheme}>
+                  <AiOutlineSend />
+                </Button>
+              </HStack>
+            </form>
           </Box>
-          <form onSubmit={sendMsg}>
-            <HStack>
-              <Input
-                value={newMsg}
-                onChange={(e) => setNewMsg(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <Button type="submit">
-                Send
-              </Button>
-            </HStack>
-          </form>
-          <AlertBox status="info" text />
         </Container>
       </Flex>
     </>

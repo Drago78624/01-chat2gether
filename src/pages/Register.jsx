@@ -156,7 +156,7 @@ const Register = () => {
         <VStack spacing={5}>
           <Button onClick={onSignUpWithGoogle} colorScheme="red" width="full">
             <FaGooglePlusG size={30} />
-            <Text ml={3}>Sign in with Google</Text>
+            <Text ml={3}>Login with Google</Text>
           </Button>
           <Text>
             Already have an account ?{" "}
